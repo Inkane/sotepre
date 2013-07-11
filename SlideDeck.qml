@@ -212,7 +212,8 @@ Presentation {
 	content: [
 	    "explores all branches",
 	    "will find path to bug (some day)",
-	    "You have a supercomputer, right?"
+	    "You have a supercomputer, right?",
+	    "Problem: Needs to enumerate all conditions"
 	]
 	Rectangle {
 	    anchors.right: parent.right
@@ -245,7 +246,6 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
     Slide {
 	id: works
 	title: "How it works"
-	numbered: true
 	notes: "User has to select entry function"
 	Image {
 	    id: flowChart
@@ -253,10 +253,20 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	    source: "images/cute_flowchart.svg"
 	}
     }
+    
+    Slide {
+	id: instrumentation
+	title: "Instrumentation"
+	content: [
+	    "needed for symbolic execution",
+	    "adds instrumentation statements",
+	    "program code\tinstrumented code\n//assignment \texecute symbolic(&v,“e”);\nv ← e;\t\t\tv ← e"
+	]
+    }
 
     CodeSlide {
-	id: example
-	title: "How it works (Example)"
+	id: inputGeneration
+	title: "Input generation"
         notes: "concolic: concrete + symbolic"
 	code: p.c_code;
 	property int index: 0
