@@ -47,7 +47,8 @@
     </g>
     <g stroke-linecap="butt" transform="matrix(1,0,0,1,-268,-164)" stroke-miterlimit="1.45">
       <ellipse rx="40" fill="none" ry="20" clip-path="url(#clipPath2)" cx="455.5" cy="184.75"/>
-      <text x="436.0879" xml:space="preserve" y="188.9062" font-family="sans-serif" clip-path="url(#clipPath2)" stroke="none">START</text>
+      <text x="419.2188" xml:space="preserve" y="181.9219" font-family="sans-serif" clip-path="url(#clipPath2)" stroke="none">Select entry</text>
+      <text x="430.9902" xml:space="preserve" y="195.8906" font-family="sans-serif" clip-path="url(#clipPath2)" stroke="none">function</text>
     </g>
     <g fill="url(#linearGradient2)" transform="matrix(1,0,0,1,-268,-164)" stroke="url(#linearGradient2)">
       <rect x="381" width="149" height="45" y="225.5" clip-path="url(#clipPath2)" stroke="none"/>

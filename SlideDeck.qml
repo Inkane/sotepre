@@ -212,8 +212,9 @@ Presentation {
 	content: [
 	    "explores all branches",
 	    "will find path to bug (some day)",
+	    "problem: Enumerates all conditions",
+	    "path explosion",
 	    "You have a supercomputer, right?",
-	    "Problem: Needs to enumerate all conditions"
 	]
 	Rectangle {
 	    anchors.right: parent.right
@@ -262,6 +263,13 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	    "adds instrumentation statements",
 	    "program code\tinstrumented code\n//assignment \texecute symbolic(&v,“e”);\nv ← e;\t\t\tv ← e"
 	]
+	Image {
+	    source: "images/instrumentation.svg"
+	    sourceSize.width: 200;
+	    sourceSize.height: 300;
+	    anchors.right: parent.right
+	    anchors.margins: 100
+	}
     }
 
     CodeSlide {
@@ -269,8 +277,23 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	title: "Input generation"
         notes: "concolic: concrete + symbolic"
 	code: p.c_code;
+	fontSize: 30;
 	property int index: 0
 	
+	Rectangle {
+	    id: inputSVG
+	    width: 200;
+	    height: 300;
+	    Image {
+		source: "images/input.svg"
+		anchors.left: parent.left
+		sourceSize.width: 200;
+		sourceSize.height: 300;
+	    }
+		anchors.verticalCenter: parent.verticalCenter
+		anchors.right: parent.right
+		anchors.margins: 0.2*height
+	}
 	
 	InfoBlock {
             text: [
@@ -294,7 +317,7 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	    id: values
 	    title: "Values"
 	    anchors.top: parent.top
-	    anchors.right: parent.right
+	    anchors.right: inputSVG.left
 	    anchors.margins: 0.2*height
 	}
 	
@@ -318,39 +341,107 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	    ]
 	
 	    anchors.top: values.bottom
-	    anchors.right: parent.right
+	    anchors.right: inputSVG.left
 	    anchors.margins: 0.2*height
 	}
     }
     
     Slide {
-	title: "The symbolic part of concolic"
+	title: "Concolic execution"
 	textFormat: Text.RichText
 	content: [
-	  "same time as concrete",
-	  "instrumentation statements",
-          "linear constraints",
-	  "falls back to concrete value if unable to solve constraint",
+	  "symbolic and concrete at same time",
+	  "approximates",
+          "only linear constraints",
+	  "falls back to concrete value<br>if unable to solve constraint",
           "  α = ν + φ; β = ε + π",
           "  α × β = <span style='color: #FF3213'>?</span> <i>//too hard</i>", 
           "  ⇒ use concrete value for either α or β",
-          "invariants"
+          "optimized symbolic execution (3 optimizations)"
+	]
+	Rectangle {
+	    id: concolic
+	    anchors.verticalCenter: parent.verticalCenter;
+	    anchors.right: parent.right
+	    anchors.rightMargin: 100;
+	    Image {
+		source: "images/concolic.svg"
+		anchors.verticalCenter: parent.verticalCenter
+		anchors.horizontalCenter: parent.horizontalCenter
+		sourceSize.width: 200;
+		sourceSize.height: 300;
+	    }
+	}
+    }
+    
+    Slide {
+	title: "OPT1: Fast Unsatisfiability Check"
+	content: [
+	    "purely syntactic",
+	    "skips semantic check if last constraint is negation of previous ones",
+	    "Example:",
+	    "  previous constraints: x>4, y≠3, p=NULL",
+	    "  new constraint: y=3 ⇒ skips check",
+	    "  new constraint: x<3 ⇒ does not skip",
+	    "60–95% fewer semantic checks"
 	]
     }
     
     Slide {
-       title: "Summary"
-       content: ["concolic = concrete + symbolic",
-                 "random input",
-                 "solves constraints",
-                 "  to find new paths ",
-                 "  to respect invariants "
-                ]
+	title: "OPT2: Common sub–constraints elimination"
+	content: [
+	    "checks arithmetic subconstraints",
+	    "Example:",
+	    "  original constraints: x>4, x>10, x>15, y<12, y<1",
+	    "  after OPT2: x>4, y<1",
+	    "OPT2&3 together reduce number of subconstraints by 64–90%"
+	]
     }
-
+    
     Slide {
-	centeredText: "?"
-	fontScale: 5
+	title: "OPT3: Incremental solving"
+	content: [
+	    "exploits dependencies bewteen subconstraints",
+	    "DFS ⇒ path constraint of consecutive runs differ only in few predicates"
+	]
+    }
+    
+    Slide {
+	title: "Evaluation: CUTE"
+	content: [
+	    "authors evaluated CUTE on data structures:",
+	    "  found memory leak in CUTE's code",
+	    "  found 2 bugs in SGLIB",
+	    "high branch coverage 70%–100%",
+	]
+    }
+    
+    Slide {
+	title: "Evaluation: Concolic Testing"
+	content: [
+	    "A Case Study of Concolic Testing Tools and Their Limitations:",
+	    "  evaluated several concolic tools",
+	    "  pointer arithmetic and library function calls are limiting",
+	    "  average branch coverage: 60% (CREST & KLEE)",
+	    "  high setup time"
+	]
+    }
+    
+    Slide {
+       title: "Summary + Outlook"
+       Image {
+	   anchors.left: parent.horizontalCenter
+	   anchors.verticalCenter: parent.verticalCenter
+	   source: "images/cute_flowchart.svg"
+       }
+       contentWidth: width/2
+       content: [
+	   "concolic: best of random testing + symbolic execution",
+	   "effective for dynamic data structures",
+	   "future work:",
+	   "  concurrent programs",
+	   "  alternative to DSF"
+	]
     }
 
     SequentialAnimation {
