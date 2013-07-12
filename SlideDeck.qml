@@ -65,7 +65,7 @@ Presentation {
       "testme(cell *p, long x)<br>" +
       "  if (x > 0)<br>" +
       "    if (p != NULL)<br>" +
-      "      if (f(x) == p->v)<span style=\"color:#FF3213\">4.294.967.295 values for x</span><br>" +
+      "      if (f(x) == p->v)<span style=\"color:#FF3213\">   4.294.967.295 values for x</span><br>" +
       "        if (p->next == p) <span style=\"color:#FF3213\">Theoretically ∞ values for p->next</span><br>" +
       "            THIS_DOES_CRASH;<br>" +
       "  return 0;<br>" +
@@ -252,16 +252,31 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	    id: flowChart
 	    anchors.horizontalCenter: parent.horizontalCenter
 	    source: "images/cute_flowchart.svg"
+	    sourceSize.height: 0.9 * parent.height
 	}
     }
     
     Slide {
 	id: instrumentation
 	title: "Instrumentation"
+	textFormat: Text.RichText
 	content: [
 	    "needed for symbolic execution",
 	    "adds instrumentation statements",
-	    "program code\tinstrumented code\n//assignment \texecute symbolic(&v,“e”);\nv ← e;\t\t\tv ← e"
+	    "<table border='1' width='65%' border-style='dashed'>
+	      <tr>
+	        <th>program code</th>
+	        <th>instrumented code<br></th>
+	      </tr>
+	      <tr>
+	        <td>//assignment<br>v ← e;</td>
+	        <td>execute_symbolic(&v, 'e')<br>v ← e;</td>
+	      </tr>
+	      <tr>
+	        <td>//conditional<br>if (p) goto l</td>
+		<td>evaluate_predicate(“p”, p);<br>if (p) goto l</td>
+	      </tr>
+	    </table>",
 	]
 	Image {
 	    source: "images/instrumentation.svg"
@@ -272,9 +287,24 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	}
     }
 
+    Slide {
+	id: inputGen
+	title: "Input generation"
+	content: [
+	    "uses collected constraints",
+	    "Depth First Search (DFS)",
+	]
+	Image {
+	    id: initimg
+	    source: "images/initialization.svg"
+	    height: 0.9*parent.height
+	    anchors.horizontalCenter: parent.horizontalCenter
+	}
+    }
+    
     CodeSlide {
 	id: inputGeneration
-	title: "Input generation"
+	title: "Input generation (Example)"
         notes: "concolic: concrete + symbolic"
 	code: p.c_code;
 	fontSize: 30;
@@ -393,7 +423,7 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	    "checks arithmetic subconstraints",
 	    "Example:",
 	    "  original constraints: x>4, x>10, x>15, y<12, y<1",
-	    "  after OPT2: x>4, y<1",
+	    "  after OPT2: x>15, y<1",
 	    "OPT2&3 together reduce number of subconstraints by 64–90%"
 	]
     }
@@ -401,7 +431,7 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
     Slide {
 	title: "OPT3: Incremental solving"
 	content: [
-	    "exploits dependencies bewteen subconstraints",
+	    "exploits dependencies between subconstraints",
 	    "DFS ⇒ path constraint of consecutive runs differ only in few predicates"
 	]
     }
@@ -413,6 +443,7 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	    "  found memory leak in CUTE's code",
 	    "  found 2 bugs in SGLIB",
 	    "high branch coverage 70%–100%",
+	    "Are data structures a valid base for evaluation?"
 	]
     }
     
@@ -420,6 +451,7 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	title: "Evaluation: Concolic Testing"
 	content: [
 	    "A Case Study of Concolic Testing Tools and Their Limitations:",
+	    "  Xiao Qu + Brian Robinson (2011)",
 	    "  evaluated several concolic tools",
 	    "  pointer arithmetic and library function calls are limiting",
 	    "  average branch coverage: 60% (CREST & KLEE)",
@@ -433,11 +465,14 @@ style=\"color:#1F404F1F404F\">olic</span> execution"
 	   anchors.left: parent.horizontalCenter
 	   anchors.verticalCenter: parent.verticalCenter
 	   source: "images/cute_flowchart.svg"
+	   height: parent.height * 0.9
        }
        contentWidth: width/2
        content: [
 	   "concolic: best of random testing + symbolic execution",
-	   "effective for dynamic data structures",
+	   "  effective for dynamic data structures",
+	   "  not a golden hammer",
+	   "  optimizing symbolic execution helps",
 	   "future work:",
 	   "  concurrent programs",
 	   "  alternative to DSF"
